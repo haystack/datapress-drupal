@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * Implements hook_help.
+ *
+ * Displays help and module information.
+ *
+ * @param path 
+ *   Which path of the site we're using to display help
+ * @param arg 
+ *   Array that holds the current path as returned from arg() function
+ */
+function datapress_help($path, $arg) {
+  switch ($path) {
+    case "admin/help#datapress":
+      return '<p>' . t("Helps facet objects.") . '</p>';
+      break;
+  }
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function datapress_block_info() {
+  $blocks['current_posts'] = array(
+    'info' => t('Datapress'), //The name that will appear in the block list.
+    'cache' => DRUPAL_CACHE_PER_ROLE, //Default
+  );
+  return $blocks;
+}
