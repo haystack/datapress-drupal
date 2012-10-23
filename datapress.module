@@ -29,6 +29,17 @@ function datapress_block_info() {
   return $blocks;
 }
 
+
+/**
+ * Datapress factet function
+ * 
+ * @return 
+ *   The body of the facets for this page
+ */
+function datapress_block_contents() {
+  return "FOO";
+} 
+
 /**
  * Displays the datapress block.
  */
@@ -36,7 +47,7 @@ function datapress_block_view($delta = '') {
   switch($delta){
     case 'current_posts':
       $block['subject'] = t('Current posts');
-      if(user_access('access content')){
+      if (user_access('access content')) {
         //Use our custom function to retrieve data.
 
 
@@ -65,12 +76,3 @@ function datapress_block_view($delta = '') {
   return $block;
 }
 
-/**
- * Datapress factet function
- * 
- * @return 
- *   The body of the facets for this page
- */
-function datapress_block_contents() {
-  return "FOO";
-} 
