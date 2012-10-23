@@ -66,7 +66,7 @@ function datapress_block_view($delta = '') {
         $block['content'] = t('No posts available.');  
         //$block['content'] = datapress_block_contents();
       }
+      return $block;
   }
-  return $block;
 }
 
