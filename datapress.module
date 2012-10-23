@@ -22,7 +22,7 @@ function datapress_help($path, $arg) {
  * Implements hook_block_info().
  */
 function datapress_block_info() {
-  $blocks['current_posts'] = array(
+  $blocks['datapress'] = array(
     'info' => t('Datapress'), //The name that will appear in the block list.
     'cache' => DRUPAL_CACHE_PER_ROLE, //Default
   );
@@ -45,8 +45,8 @@ function datapress_block_contents() {
  */
 function datapress_block_view($delta = '') {
   switch($delta){
-    case 'current_posts':
-      $block['subject'] = t('Current posts');
+    case 'datapress':
+      $block['subject'] = t('Filter Items');
       if (user_access('access content')) {
         //Use our custom function to retrieve data.
 
