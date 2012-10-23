@@ -36,8 +36,8 @@ function datapress_block_info() {
  * @return 
  *   The body of the facets for this page
  */
-function datapress_block_contents() {
-  return "FOO";
+function datapress_facets() {
+  return array();
 } 
 
 /**
@@ -50,21 +50,18 @@ function datapress_block_view($delta = '') {
       if (user_access('access content')) {
         //Use our custom function to retrieve data.
 
+        $facets = datapress_facets();
 
-        //$result = datapress_block_contents();
-        ////Array to contain items for the block to render.
-        //$items = array();
+        if (empty($facets)) { //No content in the last week.
+          $block['content'] = t('No filters available.');  
+        } 
+
         ////Iterate over the resultset and format as links.
         //foreach ($result as $node){
         //  $items[] = array(
         //    'data' => l($node->title, 'node/' . $node->nid),
         //  ); 
         //}
-        //if (empty($items)) { //No content in the last week.
-        //  $block['content'] = t('No posts available.');  
-        //} 
-        $block['content'] = t('No posts available.');  
-        //$block['content'] = datapress_block_contents();
       }
   }
   return $block;
