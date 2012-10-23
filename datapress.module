@@ -63,14 +63,8 @@ function datapress_block_view($delta = '') {
         //if (empty($items)) { //No content in the last week.
         //  $block['content'] = t('No posts available.');  
         //} 
-        $block['content'] = datapress_block_contents();
-      }
-
-      else {
-        //Pass data through theme function.
-        $block['content'] = theme('item_list', array(
-          'items' => $items));
-        }
+        $block['content'] = t('No posts available.');  
+        //$block['content'] = datapress_block_contents();
       }
   }
   return $block;
