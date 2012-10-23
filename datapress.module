@@ -46,7 +46,7 @@ function datapress_block_contents() {
 function datapress_block_view($delta = '') {
   switch($delta) {
     case 'current_posts':
-      $block['subject'] = t('Current posts');
+      $block['subject'] = t('Fiter Items');
       if (user_access('access content')) {
         //Use our custom function to retrieve data.
 
