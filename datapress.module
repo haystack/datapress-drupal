@@ -38,22 +38,19 @@ function datapress_block_view($delta = '') {
       $block['subject'] = t('Current posts');
       if(user_access('access content')){
         //Use our custom function to retrieve data.
-
-
-        //$result = datapress_block_contents();
-        ////Array to contain items for the block to render.
-        //$items = array();
-        ////Iterate over the resultset and format as links.
-        //foreach ($result as $node){
-        //  $items[] = array(
-        //    'data' => l($node->title, 'node/' . $node->nid),
-        //  ); 
-        //}
-        //if (empty($items)) { //No content in the last week.
-        //  $block['content'] = t('No posts available.');  
-        //} 
-        $block['content'] = datapress_block_contents();
-
+        $result = datapress_block_contentsj();
+        //Array to contain items for the block to render.
+        $items = array();
+        //Iterate over the resultset and format as links.
+        foreach ($result as $node){
+          $items[] = array(
+            'data' => l($node->title, 'node/' . $node->nid),
+          ); 
+        }
+        
+        if (empty($items)) { //No content in the last week.
+          $block['content'] = t('No posts available.');  
+        } 
       else {
         //Pass data through theme function.
         $block['content'] = theme('item_list', array(
