@@ -1,3 +1,5 @@
 name = Datapress
 description = Helps facet items.
 core = 7.x
+stylesheets[all][] = datapress.css
+scripts[] = datapress.js

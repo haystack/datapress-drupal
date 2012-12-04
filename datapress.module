@@ -1,69 +1,162 @@
 <?php
+  error_reporting(E_ALL);
+  ini_set('display_errors', '1');
 
-/**
- * Implements hook_help.
- *
- * Displays help and module information.
- *
- * @param path 
- *   Which path of the site we're using to display help
- * @param arg 
- *   Array that holds the current path as returned from arg() function
- */
-function datapress_help($path, $arg) {
-  switch ($path) {
-    case "admin/help#datapress":
-      return '<p>' . t("Helps facet objects.") . '</p>';
-      break;
-  }
-}
-
-/**
- * Implements hook_block_info().
- */
-function datapress_block_info() {
-  $blocks['datapress'] = array(
-    'info' => t('Datapress'), //The name that will appear in the block list.
-    'cache' => DRUPAL_CACHE_PER_ROLE, //Default
+function datapress_menu() { 
+//  $items['datapress/node/%node/json'] = array(
+//    'page callback' => 'datapress_json_endpoint',
+//    'page arguments' => array(1),
+//    'access arguments' => array('access content'),
+//  );
+  $items['datapress/type/%/json'] = array(
+    'page callback' => 'datapress_json_by_type',
+    'page arguments' => array(2),
+    'access arguments' => array('access content'),
   );
-  return $blocks;
+  return $items;
 }
 
-
-/**
- * Datapress factet function
- * 
- * @return 
- *   The body of the facets for this page
- */
-function datapress_facets() {
-  return array();
-} 
-
-/**
- * Displays the datapress block.
- */
-function datapress_block_view($delta = '') {
-  switch($delta) {
-    case 'current_posts':
-      $block['subject'] = t('Fiter Items');
-      if (user_access('access content')) {
-        //Use our custom function to retrieve data.
-
-        $facets = datapress_facets();
-
-        if (empty($facets)) { //No content in the last week.
-          $block['content'] = t('No filters available.');  
-        } 
-
-        ////Iterate over the resultset and format as links.
-        //foreach ($result as $node){
-        //  $items[] = array(
-        //    'data' => l($node->title, 'node/' . $node->nid),
-        //  ); 
-        //}
-      }
+function datapress_json_by_type($type) {
+  $ret = array();
+  $ret["type"] = $type;
+  $ret["items"] = array();
+  $query = new EntityFieldQuery();
+  $nodes = $query->entityCondition('entity_type', 'node')
+                 ->propertyCondition('type', $type)
+                 ->propertyCondition('status', 1)
+                 ->execute();
+  $ret["nodes"] = $nodes;
+  if (!empty($nodes["node"])) {
+    foreach ($nodes["node"] as $key => $node) {
+      $node = node_load($key);
+      array_push($ret["items"], datapress_node_export_structure($node));
+    }
   }
-  return $block;
+  drupal_json_output($ret);
 }
 
+//function datapress_json_endpoint($node) {
+//  $ret = array();
+//  $ret["items"] = array();
+//
+//  if ($node->status == 1) {
+//    array_push($ret["items"], 
+//               datapress_node_export_structure($node));
+//  }
+//  drupal_json_output($ret);
+//}
+
+function datapress_node_export_structure($node) {
+  $ret = array();
+  $ret['id'] = $node->nid;
+  $ret['type'] = $node->type;
+  $ret['label'] = $node->title;
+  $ret['creator_picure'] = $node->picture;
+  //$ret['creator'] = $node->name;
+  $ret['created'] = $node->created;
+  $ret['body'] = $node->body["und"][0]["value"];
+  $ret['summary'] = $node->body["und"][0]["summary"];
+  $ret['fullbody'] = $node->body;
+  //$ret['all'] = $node;
+  $ret['custom'] = array();
+  $needle = "field_";
+  foreach ($node as $key => $value) {
+    // StartsWith
+    if (!strncmp($key, $needle, strlen($needle))) {
+      $ret['custom'][substr($key, 6)] = $value["und"][0]["value"];
+    }
+  }
+
+  return $ret;
+}
+
+//function datapress_library() {
+//  $path = drupal_get_path('module', 'datapress');
+//  $l/ibraries['datapress.lib'] = array(
+//    'title' => 'Datapress',
+//    'website' => 'http://projects.csail.mit.edu/datapress',
+//    'version' => '1.1',
+//    'js' => array(
+//      "$path/datapress.js" => array(),
+//    ),
+//    'css' => array(
+//      "$path/datapress.css" => array(
+//        'type' => 'file',
+//        'media' => 'screen',
+//      ),
+//    ),
+//  );
+//  return $libraries;
+//}
+//
+//function datapress_init() {
+////  drupal_add_library('datapress', 'datapress.lib');
+//}
+//
+///**
+// * Implements hook_help.
+// *
+// * Displays help and module information.
+// *
+// * @param path 
+// *   Which path of the site we're using to display help
+// * @param arg 
+// *   Array that holds the current path as returned from arg() function
+// */
+//function datapress_help($path, $arg) {
+//  switch ($path) {
+//    case "admin/help#datapress":
+//      return '<p>' . t("Helps facet objects.") . '</p>';
+//      break;
+//  }
+//}
+//
+///**
+// * Implements hook_block_info().
+// */
+//function datapress_block_info() {
+//  $blocks['datapress'] = array(
+//    'info' => t('Datapress'), //The name that will appear in the block list.
+//    'cache' => DRUPAL_CACHE_PER_ROLE, //Default
+//  );
+//  return $blocks;
+//}
+//
+//
+///**
+// * Datapress factet function
+// * 
+// * @return 
+// *   The body of the facets for this page
+// */
+//function datapress_facets() {
+//  return array();
+//} 
+//
+///**
+// * Displays the datapress block.
+// */
+//function datapress_block_view($delta = '') {
+//  switch($delta) {
+//    case 'current_posts':
+//      $block['subject'] = t('Fiter Items');
+//      if (user_access('access content')) {
+//        //Use our custom function to retrieve data.
+//
+//        $facets = datapress_facets();
+//
+//        if (empty($facets)) { //No content in the last week.
+//          $block['content'] = t('No filters available.');  
+//        } 
+//
+//        ////Iterate over the resultset and format as links.
+//        //foreach ($result as $node){
+//        //  $items[] = array(
+//        //    'data' => l($node->title, 'node/' . $node->nid),
+//        //  ); 
+//        //}
+//      }
+//  }
+//  return $block;
+//}
+//
