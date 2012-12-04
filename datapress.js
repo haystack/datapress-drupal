@@ -39,7 +39,7 @@ var ExhibitInjectorImpl = function() {
    * Also, we'll move any elements on the page that request to be moved
    * at this point.
    */
-  $(document).bind("registerExhibitInjector", function(evt, staticRegistry) {
+  jQuery(document).bind("registerExhibitInjector", function(evt, staticRegistry) {
     staticRegistry.register(ExhibitInjector._registryKey, self._type, self);
     self.MoveElements();
   });
@@ -56,7 +56,7 @@ var ExhibitInjectorImpl = function() {
    *                    returns Exhibit-style JSON.
    */
   self.LoadData = function(getDataFunc, convertFunc)  {
-    $(document).bind("exhibitConfigured.exhibit", function(evt, staticRegistry) {
+    jQuery(document).bind("exhibitConfigured.exhibit", function(evt, staticRegistry) {
       getDataFunc(function(json) {
         var exhibitJSON = convertFunc(json);
         console.log("Adding to database", exhibitJSON);
@@ -131,8 +131,8 @@ var ExhibitInjectorImpl = function() {
   self.MoveElement = function(srcElem, destElem, offset) {
     if ((typeof srcElem != "undefined") &&
         (typeof destElem != "undefined")) {
-      destElem = $(destElem);
-      srcElem = $(srcElem);
+      destElem = jQuery(destElem);
+      srcElem = jQuery(srcElem);
       srcElem.remove();
       if (offset == "replace") {
         destElem.replaceWith(srcElem);
@@ -154,7 +154,7 @@ var ExhibitInjectorImpl = function() {
    * Moves all elements with the data-remap attribute.
    */
   self.MoveElements = function() {
-    $.each($("[data-remap=true]"), function(idx, elem) {
+    jQuery.each(jQuery("[data-remap=true]"), function(idx, elem) {
       var dest = elem.getAttribute("data-destination");
       var offset = elem.getAttribute("data-offset");
       var error = false;
@@ -163,7 +163,7 @@ var ExhibitInjectorImpl = function() {
       }
 
       if (typeof dest != "undefined") {
-        var destElem = $(dest);
+        var destElem = jQuery(dest);
         if (destElem.length == 1) {
           self.MoveElement(elem, destElem[0], offset);
         } else {
@@ -181,10 +181,10 @@ var ExhibitInjectorImpl = function() {
 /**
  * Bind registration of ExhibitInjector to Exhibit3's register static component phase.
  */
-$(document).bind("registerStaticComponents.exhibit", function(evt, staticRegistry) {
+jQuery(document).bind("registerStaticComponents.exhibit", function(evt, staticRegistry) {
   if (!staticRegistry.hasRegistry(ExhibitInjector._registryKey)) {
     staticRegistry.createRegistry(ExhibitInjector._registryKey);
-    $(document).trigger("registerExhibitInjector", staticRegistry);
+    jQuery(document).trigger("registerExhibitInjector", staticRegistry);
   }
 });
 
