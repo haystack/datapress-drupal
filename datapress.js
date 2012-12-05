@@ -195,13 +195,16 @@ jQuery(document).bind("registerStaticComponents.exhibit", function(evt, staticRe
 jQuery(function() {
   // On page load, look for any .insert-exhibit DIVs
   var foundSome = false;
+  console.log("Running");
   jQuery.each(jQuery('.insert-exhibit'), function(idx, elem) {
+    console.log("Found Exhibit");
     var e = jQuery(elem);
     // Move any links into the head
     e.find('link').remove().appendTo(jQuery('head'));
     foundSome = true;
   });
   if (foundSome) {
+    console.log("Found some");
     // Now start up the Exhibit loader
     window.exhibitInjector = new ExhibitInjectorImpl();
     window.exhibitInjector.LoadExhibit();
