@@ -66,8 +66,8 @@ its body:
 
     <div class="insert-exhibit">
        <link href="/datapress/type/Research_Project/json" type="application/json" rel="exhibit/data" />
-       <div data-ex-role="viewPanel">
-          <div data-ex-role="view" data-ex-viewClass="Tile" data-ex-label="Projects">
+       <div ex:role="viewPanel">
+          <div ex:role="view" ex:viewClass="Tile" ex:label="Projects">
           </div>
       </div>
     </div>
@@ -81,9 +81,9 @@ Many Exhibit examples on the web use line breaks *within* HTML elements to make
 things look nice, like this: 
 
 
-    <div data-ex-role="view"
-         data-ex-viewClass="Tile"
-         data-ex-label="Projects"
+    <div ex:role="view"
+         ex:viewClass="Tile"
+         ex:label="Projects"
     ></div>
 
 **Do not do this in Drupal.** It will confuse Drupal's HTML parser and result
@@ -91,7 +91,7 @@ in a page that displays HTML rather than an Exhibit.
 
 Instead, do this:
 
-    <div data-ex-role="view" data-ex-viewClass="Tile" data-ex-label="Projects">
+    <div ex:role="view" ex:viewClass="Tile" ex:label="Projects">
     </div>
 
 
@@ -107,12 +107,12 @@ Example 1 to include a text search facet:
 
     <div class="insert-exhibit">
 
-      <div data-ex-role="facet" data-ex-facet-class="TextSearch" data-ex-facet-label="Search">
+      <div ex:role="facet" ex:facetClass="TextSearch" ex:facetLabel="Search">
       </div>
 
       <link href="/datapress/type/Research_Project/json" type="application/json" rel="exhibit/data" />
-      <div data-ex-role="viewPanel">
-        <div data-ex-role="view" data-ex-viewClass="Tile" data-ex-label="Projects">
+      <div ex:role="viewPanel">
+        <div ex:role="view" ex:viewClass="Tile" ex:label="Projects">
         </div>
       </div>
     </div>
@@ -134,13 +134,13 @@ The final Exhibit HTML now reads:
     <div class="insert-exhibit">
 
       <div data-remap="true" data-destination="#sidebar-first" data-offset="append">
-        <div data-ex-role="facet" data-ex-facet-class="TextSearch" data-ex-facet-label="Search">
+        <div ex:role="facet" ex:facetClass="TextSearch" ex:facetLabel="Search">
         </div>
       </div>
 
       <link href="/datapress/type/Research_Project/json" type="application/json" rel="exhibit/data" />
-      <div data-ex-role="viewPanel">
-         <div data-ex-role="view" data-ex-viewClass="Tile" data-ex-label="Projects">
+      <div ex:role="viewPanel">
+         <div ex:role="view" ex:viewClass="Tile" ex:label="Projects">
          </div>
       </div>
     </div>
