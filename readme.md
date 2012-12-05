@@ -39,7 +39,7 @@ list:
 *  `created`, Unix timestamp of item creation date
 *  `body`, The body (page content) of the node
 *  `summary`, The summary content of the node
-*  `custom.FIELD` Any custom fields you have defined on the item type
+*  `custom.FIELD`, Any custom fields you have defined on the item type
 
 Inserting an Exhibit
 --------------------
@@ -50,7 +50,44 @@ that will help you bootstrap Exhibit entirely from within the `BODY` element.
 It also provides helpful methods to help move elements around the page: into
 sidebars for example.
 
-Example 1: A Simple Exhibit
-----------------------------
+To create an Exhibit, first you need to choose **Full HTML** mode when editing
+your page. This enables you to type arbitrary HTML into the post. Next, just
+wrap the Exhibit you want to create in `<div class="insert-exhibit"></div>`.
+Any `link` elements inside there will be moved to the head.
 
-TODO
+That's it. The examples below cover the finer-grained features.
+
+Example 1: A Simple Exhibit of Drupal Items
+-------------------------------------------
+
+To create a simple default Exhibit, with no additional styling, of all
+**Research Project** items managed by Drupal, create a page and place this in
+its body:
+
+    <div class="insert-exhibit">
+       <link href="/datapress/type/Research_Project/json" type="application/json" rel="exhibit/data" />
+       <div data-ex-role="viewPanel">
+          <div data-ex-role="view" data-ex-viewClass="Tile" data-ex-label="Projects">
+          </div>
+      </div>
+    </div>
+
+### Drupal and HTML Writing Style
+
+Many Exhibit examples on the web use line breaks *within* and HTML elements to
+make things look nice, like this: 
+
+
+    <div data-ex-role="view"
+         data-ex-viewClass="Tile"
+         data-ex-label="Projects"
+    ></div>
+
+**Do not do this in Drupal.** It will confuse Drupal's HTML parser and result
+in a page that displays HTML rather than an Exhibit.
+
+Instead, do this:
+
+    <div data-ex-role="view" data-ex-viewClass="Tile" data-ex-label="Projects">
+    </div>
+
