@@ -17,12 +17,12 @@ Data Feeds
 When Datapress is enabled, you can access an Exhibit-style JSON data feed for
 any item type by going to:
 
-   /datapress/type/TYPE/json
+    /datapress/type/TYPE/json
 
 Where `TYPE` should be replaced by the item type. For example, to see a list of
 `Research Project` items, use the feed:
 
-   /datapress/type/Research%20Project/json
+    /datapress/type/Research%20Project/json
 
 Inserting an Exhibit
 --------------------
