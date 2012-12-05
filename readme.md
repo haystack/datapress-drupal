@@ -72,6 +72,9 @@ its body:
       </div>
     </div>
 
+That's it. Notice that the datasource `link` element, which Exhibit wants in
+the `HEAD`, will get moved there for you by the plugin.
+
 ### Drupal and HTML Writing Style
 
 Many Exhibit examples on the web use line breaks *within* HTML elements to make
@@ -91,3 +94,56 @@ Instead, do this:
     <div data-ex-role="view" data-ex-viewClass="Tile" data-ex-label="Projects">
     </div>
 
+
+Example 2: Putting Facets in the Sidebar
+----------------------------------------
+
+Let's say we want a facet, but we don't want it in the narrow content region of
+the body. The sidebar area would be much nicer. We need to do two things to
+accomplish this.
+
+The first, obviously, is to create a facet. Let's change the Exhibit from
+Example 1 to include a text search facet:
+
+    <div class="insert-exhibit">
+
+      <div data-ex-role="facet" data-ex-facet-class="TextSearch" data-ex-facet-label="Search">
+      </div>
+
+      <link href="/datapress/type/Research_Project/json" type="application/json" rel="exhibit/data" />
+      <div data-ex-role="viewPanel">
+        <div data-ex-role="view" data-ex-viewClass="Tile" data-ex-label="Projects">
+        </div>
+      </div>
+    </div>
+
+Blank lines surround the new content above.
+
+The next step is to **move** the facet into the sidebar. I used **Firebug** to
+inspect the HTML of my Drupal page and found out that the sidebar has the CSS
+class `.sidebar` and the ID `#sidebar-first`.
+
+The plugin wil move any element with special properties. I'll wrap the Facet in
+a `DIV` with the following properties:
+
+     <div data-remap="true" data-destination="#sidebar-first" data-offset="append">
+     </div>
+
+The final Exhibit HTML now reads:
+
+    <div class="insert-exhibit">
+
+      <div data-remap="true" data-destination="#sidebar-first" data-offset="append">
+        <div data-ex-role="facet" data-ex-facet-class="TextSearch" data-ex-facet-label="Search">
+        </div>
+      </div>
+
+      <link href="/datapress/type/Research_Project/json" type="application/json" rel="exhibit/data" />
+      <div data-ex-role="viewPanel">
+         <div data-ex-role="view" data-ex-viewClass="Tile" data-ex-label="Projects">
+         </div>
+      </div>
+    </div>
+
+When the Exhibit is created, the Facet will first be moved from its current
+location and be appended to the `#sidebar-first` element.
