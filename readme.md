@@ -74,8 +74,8 @@ its body:
 
 ### Drupal and HTML Writing Style
 
-Many Exhibit examples on the web use line breaks *within* and HTML elements to
-make things look nice, like this: 
+Many Exhibit examples on the web use line breaks *within* HTML elements to make
+things look nice, like this: 
 
 
     <div data-ex-role="view"
