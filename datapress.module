@@ -35,6 +35,33 @@ function datapress_json_by_type($type) {
   drupal_json_output($ret);
 }
 
+function datapress_users_by_role($roleName) {
+  $role = user_role_load_by_name($roleName);
+  $result = db_select('users_roles', 'ur')
+             ->fields('ur', arrau('uid'))
+             ->condition('rid', $role->rid)
+             ->execute();
+  
+  foreach($result as $record) {
+    $uids[] = $record->uid;
+  }
+
+  $query = new EntityFieldQuery();
+  $users = $query->entityCondition('entity_type', 'user')
+                 ->entityCondition('entity_id', $uids, 'IN')
+                 ->execute();
+
+  $ret = array();
+  $ret["items"] = array();
+  if (!empty($users["user"])) {
+    foreach ($users["user"] as $key => $user) {
+      $user = user_load($key);
+      array_push($ret["items"], datapress_user_export_structure($user));
+    }
+  }
+  drupal_json_output($ret);
+}
+
 //function datapress_json_endpoint($node) {
 //  $ret = array();
 //  $ret["items"] = array();
@@ -67,6 +94,12 @@ function datapress_node_export_structure($node) {
     }
   }
 
+  return $ret;
+}
+
+function datapress_user_export_structure($user) {
+  $ret = array();
+  $ret = $user;
   return $ret;
 }
 
