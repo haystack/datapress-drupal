@@ -8,15 +8,20 @@ function datapress_menu() {
 //    'page arguments' => array(1),
 //    'access arguments' => array('access content'),
 //  );
-  $items['datapress/type/%/json'] = array(
-    'page callback' => 'datapress_json_by_type',
-    'page arguments' => array(2),
+  $items['datapress/node/type/%/json'] = array(
+    'page callback' => 'datapress_nodes_by_type',
+    'page arguments' => array(3),
+    'access arguments' => array('access content'),
+  );
+  $items['datapress/user/role/%/json'] = array(
+    'page callback' => 'datapress_users_by_role',
+    'page arguments' => array(3),
     'access arguments' => array('access content'),
   );
   return $items;
 }
 
-function datapress_json_by_type($type) {
+function datapress_nodes_by_type($type) {
   $ret = array();
   $ret["type"] = $type;
   $ret["items"] = array();
@@ -38,7 +43,7 @@ function datapress_json_by_type($type) {
 function datapress_users_by_role($roleName) {
   $role = user_role_load_by_name($roleName);
   $result = db_select('users_roles', 'ur')
-             ->fields('ur', arrau('uid'))
+             ->fields('ur', array('uid'))
              ->condition('rid', $role->rid)
              ->execute();
   
@@ -49,6 +54,7 @@ function datapress_users_by_role($roleName) {
   $query = new EntityFieldQuery();
   $users = $query->entityCondition('entity_type', 'user')
                  ->entityCondition('entity_id', $uids, 'IN')
+                 ->propertyCondition('status', 1)
                  ->execute();
 
   $ret = array();
@@ -62,29 +68,17 @@ function datapress_users_by_role($roleName) {
   drupal_json_output($ret);
 }
 
-//function datapress_json_endpoint($node) {
-//  $ret = array();
-//  $ret["items"] = array();
-//
-//  if ($node->status == 1) {
-//    array_push($ret["items"], 
-//               datapress_node_export_structure($node));
-//  }
-//  drupal_json_output($ret);
-//}
-
 function datapress_node_export_structure($node) {
   $ret = array();
   $ret['id'] = $node->nid;
   $ret['type'] = $node->type;
   $ret['label'] = $node->title;
   $ret['creator_picure'] = $node->picture;
-  //$ret['creator'] = $node->name;
+  $ret['creator'] = $node->name;
   $ret['created'] = $node->created;
   $ret['body'] = $node->body["und"][0]["value"];
   $ret['summary'] = $node->body["und"][0]["summary"];
   $ret['fullbody'] = $node->body;
-  //$ret['all'] = $node;
   $ret['custom'] = array();
   $needle = "field_";
   foreach ($node as $key => $value) {
@@ -99,7 +93,29 @@ function datapress_node_export_structure($node) {
 
 function datapress_user_export_structure($user) {
   $ret = array();
-  $ret = $user;
+  $ret['id'] = $user->uid;
+  $ret['label'] = $user->name;
+  if (isset($user->picture)) {
+    if (isset($user->picture->uri)) {
+      $ret['picture'] = $user->picture->uri;
+    }
+  }
+
+  $ret['roles'] = array();
+  foreach ($user->roles as $id => $name) {
+    array_push($ret['roles'], $name);
+  }
+
+  $ret['custom'] = array();
+  $needle = "field_";
+  foreach ($user as $key => $value) {
+    // StartsWith
+    if (!strncmp($key, $needle, strlen($needle))) {
+      $ret['custom'][substr($key, 6)] = $value["und"][0]["value"];
+    }
+  }
+
+  //$ret['user'] = $user;
   return $ret;
 }
 
