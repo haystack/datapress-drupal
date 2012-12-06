@@ -59,7 +59,6 @@ var ExhibitInjectorImpl = function() {
     jQuery(document).bind("exhibitConfigured.exhibit", function(evt, staticRegistry) {
       getDataFunc(function(json) {
         var exhibitJSON = convertFunc(json);
-        console.log("Adding to database", exhibitJSON);
         window.exhibit.getDatabase().loadData(exhibitJSON);
       });
     });
@@ -188,4 +187,22 @@ jQuery(document).bind("registerStaticComponents.exhibit", function(evt, staticRe
   }
 });
 
-
+/**
+ * This is the beginning of the Drupal-specific code
+ * -------------------------------------------------
+ */
+jQuery(function() {
+  // On page load, look for any .insert-exhibit DIVs
+  var foundSome = false;
+  jQuery.each(jQuery('.insert-exhibit'), function(idx, elem) {
+    var e = jQuery(elem);
+    // Move any links into the head
+    e.find('link').remove().appendTo(jQuery('head'));
+    foundSome = true;
+  });
+  if (foundSome) {
+    // Now start up the Exhibit loader
+    window.exhibitInjector = new ExhibitInjectorImpl();
+    window.exhibitInjector.LoadExhibit();
+  }
+});
