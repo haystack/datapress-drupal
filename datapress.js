@@ -198,6 +198,7 @@ jQuery(function() {
     var e = jQuery(elem);
     // Move any links into the head
     e.find('link').remove().appendTo(jQuery('head'));
+    e.find('style').remove().appendTo(jQuery('head'));
     foundSome = true;
   });
   if (foundSome) {

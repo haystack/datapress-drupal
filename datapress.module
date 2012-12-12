@@ -41,28 +41,30 @@ function datapress_nodes_by_type($type) {
 }
 
 function datapress_users_by_role($roleName) {
-  $role = user_role_load_by_name($roleName);
-  $result = db_select('users_roles', 'ur')
-             ->fields('ur', array('uid'))
-             ->condition('rid', $role->rid)
-             ->execute();
-  
-  foreach($result as $record) {
-    $uids[] = $record->uid;
-  }
-
-  $query = new EntityFieldQuery();
-  $users = $query->entityCondition('entity_type', 'user')
-                 ->entityCondition('entity_id', $uids, 'IN')
-                 ->propertyCondition('status', 1)
-                 ->execute();
-
   $ret = array();
   $ret["items"] = array();
-  if (!empty($users["user"])) {
-    foreach ($users["user"] as $key => $user) {
-      $user = user_load($key);
-      array_push($ret["items"], datapress_user_export_structure($user));
+  $role = user_role_load_by_name($roleName);
+  if ($role) {
+    $result = db_select('users_roles', 'ur')
+               ->fields('ur', array('uid'))
+               ->condition('rid', $role->rid)
+               ->execute();
+    
+    foreach($result as $record) {
+      $uids[] = $record->uid;
+    }
+  
+    $query = new EntityFieldQuery();
+    $users = $query->entityCondition('entity_type', 'user')
+                   ->entityCondition('entity_id', $uids, 'IN')
+                   ->propertyCondition('status', 1)
+                   ->execute();
+  
+    if (!empty($users["user"])) {
+      foreach ($users["user"] as $key => $user) {
+        $user = user_load($key);
+        array_push($ret["items"], datapress_user_export_structure($user));
+      }
     }
   }
   drupal_json_output($ret);
@@ -71,20 +73,28 @@ function datapress_users_by_role($roleName) {
 function datapress_node_export_structure($node) {
   $ret = array();
   $ret['id'] = $node->nid;
+  $ret['nid'] = $node->nid;
   $ret['type'] = $node->type;
   $ret['label'] = $node->title;
+  $ret['title'] = $node->title;
   $ret['creator_picure'] = $node->picture;
   $ret['creator'] = $node->name;
   $ret['created'] = $node->created;
   $ret['body'] = $node->body["und"][0]["value"];
   $ret['summary'] = $node->body["und"][0]["summary"];
   $ret['fullbody'] = $node->body;
-  $ret['custom'] = array();
+  
   $needle = "field_";
   foreach ($node as $key => $value) {
     // StartsWith
     if (!strncmp($key, $needle, strlen($needle))) {
-      $ret['custom'][substr($key, 6)] = $value["und"][0]["value"];
+      if (isset($value["und"])) {
+        if (isset($value["und"][0])) {
+          if (isset($value["und"][0]["value"])) {
+            $ret['custom-' . substr($key, 6)] = $value["und"][0]["value"];
+          }
+        }
+      }
     }
   }
 
@@ -94,10 +104,14 @@ function datapress_node_export_structure($node) {
 function datapress_user_export_structure($user) {
   $ret = array();
   $ret['id'] = $user->uid;
+  $ret['uid'] = $user->uid;
   $ret['label'] = $user->name;
+  $ret['name'] = $user->name;
+  $ret['type'] = "User";
   if (isset($user->picture)) {
     if (isset($user->picture->uri)) {
-      $ret['picture'] = $user->picture->uri;
+      $ret['picture-uri'] = $user->picture->uri;
+      $ret['picture-filename'] = $user->picture->filename;
     }
   }
 
@@ -106,18 +120,40 @@ function datapress_user_export_structure($user) {
     array_push($ret['roles'], $name);
   }
 
-  $ret['custom'] = array();
   $needle = "field_";
   foreach ($user as $key => $value) {
     // StartsWith
     if (!strncmp($key, $needle, strlen($needle))) {
-      $ret['custom'][substr($key, 6)] = $value["und"][0]["value"];
+      $ret['custom-' . substr($key, 6)] = datapress_get_custom_field_value($value);
     }
   }
-
   //$ret['user'] = $user;
   return $ret;
 }
+
+function datapress_get_custom_field_value($value) {
+  $ret = array();
+  $language = "und";
+  if (isset($value[$language])) {
+    foreach($value[$language] as $item) {
+      if (isset($item["value"])) {
+        // there is a raw value
+        array_push($ret, $item["value"]);
+      } elseif (isset($item["nid"])) {
+        $node = node_load($item["nid"]);
+        array_push($ret, $node->title);
+      }
+      // No final else
+    }
+  }
+  if (sizeof($ret) == 1) {
+    $ret = $ret[0];
+  } elseif (sizeof($ret) == 0) {
+    $ret = "";
+  }
+  return $ret;
+}
+
 
 //function datapress_library() {
 //  $path = drupal_get_path('module', 'datapress');
