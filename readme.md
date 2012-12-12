@@ -1,13 +1,13 @@
 Datapress for Drupal
 ====================
 
-Datapress for Drupal makes it easy for you to publish interactive data
-visualizations from within Drupal, and even using Drupal data as a source.
+Datapress for Drupal helps you use the Exhibit visualization framework from within Drupal.
+
 Datapress has three main features:
 
-*  An easy way to include [Exhibit 3](http://www.simile-widgets.org/exhibit3/) visualizations inside your Drupal pages without any modifications to your theme or Javascript coding.
-*  JSON data feeds of your Drupal data, for use with Exhibits you create
-*  An easy HTML syntax for moving elements around on the page after the page has been rendered. This lets you, for example, easily place facets in the sidebar without having to customize your sidebar definitions in advance to accomodate them.
+*  Data feeds for your Drupal data
+*  [Exhibit 3](http://www.simile-widgets.org/exhibit3/) Drupal integration.
+*  An easy HTML syntax for repositioning Exhibit elements in your Drupal theme. 
 
 Datapress for Drupal is different than [Datapress for
 Wordpress](http://projects.csail.mit.edu/datapress) in that it takes a more
@@ -27,32 +27,66 @@ Then in the *Modules* section of the Drupal Admin interface, enable
 Data Feeds
 ----------
 
-When Datapress is enabled, you can access an Exhibit-style JSON data feed for
-any item type by going to:
+Datapress provides two different Exhibit-style data feeds for you to use: one for People and one for Nodes.
 
-    /datapress/type/TYPE/json
+### People Data Feeds
 
-Where `TYPE` should be replaced by the item type. For example, to see a list of
-`Project` items, use the feed:
+The people data feeds are parameterized by the user **role** and accessed by the following URL, relative to your Drupal root URL:
 
-    /datapress/type/Project/json
+    /datapress/user/role/ROLE/json
 
-When a type is multiple words, use an underscore to combine them. So to see a
-list of `Research Project` items, use the feed:
+When a role has a space in it, use the URL encoded space character, **%20**. For example, if I wanted to get a data feed for all people with the role `principle investigator`, I would use the URL
 
-    /datapress/type/Research_Project/json
+    /datapress/user/role/principle%20investigator/json
 
-This data feed will include the following information about each item in the
-list:
+The fields returned for each person by this request are:
+
+Required Exhibit Fields:
+
+*  `id`, the User ID
+*  `type`, always equal to *User*
+*  `label`, the user name
+
+Fields for Display:
+
+*  `uid`, the User ID
+*  `name`, the user name
+*  `picture-uri`, the Drupal URI for the user photo. Note: this is a weird data value, e.g.: `public://pictures/picture-2322.png`
+*  `picture-filename`, just the filename portion of the `picture-uri`
+*  `roles`, an array of the user's roles in the Drupal site
+
+Custom Fields:
+
+*  `custom-FIELD`, for each custom field, a property of this form is added.
+
+### Node Data Feeds
+
+The node data feeds are parameterized by the node **type** and accessed by the following URL, relative to your Drupal root URL:
+
+    /datapress/node/type/TYPE/json
+
+When a role has a space in it, **use an underscore**. *Note that this is different than the case for Users.* Blame Drupal. For example, if I wanted to get a data feed for all nodes with the type `research project`, I would use the URL
+
+    /datapress/node/type/research_project/json
+
+The fields returned for each node by this request are:
+
+Required Exhibit Fields:
 
 *  `id`, the node ID
 *  `type`, e.g. *Research Project*
-*  `label`, e.g. *Cold Fusion*
+*  `label`, the name of the node, e.g. *Cold Fusion*
+
+Fields for Display:
+
 *  `creator_picture`, A photo of the item creator, if there is one
 *  `created`, Unix timestamp of item creation date
 *  `body`, The body (page content) of the node
 *  `summary`, The summary content of the node
-*  `custom.FIELD`, Any custom fields you have defined on the item type
+
+Custom Fields:
+
+*  `custom-FIELD`, for each custom field, a property of this form is added.
 
 Inserting an Exhibit
 --------------------
