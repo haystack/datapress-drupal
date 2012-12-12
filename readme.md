@@ -1,13 +1,13 @@
 Datapress for Drupal
 ====================
 
-Datapress for Drupal makes it easy for you to publish interactive data
-visualizations from within Drupal, and even using Drupal data as a source.
+Datapress for Drupal helps you use the Exhibit visualization framework from within Drupal.
+
 Datapress has three main features:
 
-*  An easy way to include [Exhibit 3](http://www.simile-widgets.org/exhibit3/) visualizations inside your Drupal pages without any modifications to your theme or Javascript coding.
-*  JSON data feeds of your Drupal data, for use with Exhibits you create
-*  An easy HTML syntax for moving elements around on the page after the page has been rendered. This lets you, for example, easily place facets in the sidebar without having to customize your sidebar definitions in advance to accomodate them.
+*  Data feeds for your Drupal data
+*  [Exhibit 3](http://www.simile-widgets.org/exhibit3/) Drupal integration.
+*  An easy HTML syntax for repositioning Exhibit elements in your Drupal theme. 
 
 Datapress for Drupal is different than [Datapress for
 Wordpress](http://projects.csail.mit.edu/datapress) in that it takes a more
