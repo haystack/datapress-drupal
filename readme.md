@@ -65,9 +65,11 @@ The node data feeds are parameterized by the node **type** and accessed by the f
 
     /datapress/node/type/TYPE/json
 
-When a role has a space in it, **use an underscore**. *Note that this is different than the case for Users.* Blame Drupal. For example, if I wanted to get a data feed for all nodes with the type `research project`, I would use the URL
+When a role has a space in it, **use an underscore**. *Note that this is different than the case for Users.* Blame Drupal. For example, if you wanted to get a data feed for all nodes with the type `Research Topic`, you would use the URL
 
-    /datapress/node/type/research_project/json
+    /datapress/node/type/Research_Topic/json
+
+There's an exception, though. If you have configured a *machine name* for your type, then use that instead. You can find out the machine name for yout types by going to **Structure** > **Content Types** in the Drupal administrative interface.
 
 The fields returned for each node by this request are:
 
