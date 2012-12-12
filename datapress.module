@@ -1,6 +1,7 @@
 <?php
-  error_reporting(E_ALL);
-  ini_set('display_errors', '1');
+
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
 function datapress_menu() { 
 //  $items['datapress/node/%node/json'] = array(
@@ -83,17 +84,16 @@ function datapress_node_export_structure($node) {
   $ret['body'] = $node->body["und"][0]["value"];
   $ret['summary'] = $node->body["und"][0]["summary"];
   $ret['fullbody'] = $node->body;
-  
+  //$ret['all'] = $node;
+
   $needle = "field_";
   foreach ($node as $key => $value) {
     // StartsWith
     if (!strncmp($key, $needle, strlen($needle))) {
-      if (isset($value["und"])) {
-        if (isset($value["und"][0])) {
-          if (isset($value["und"][0]["value"])) {
-            $ret['custom-' . substr($key, 6)] = $value["und"][0]["value"];
-          }
-        }
+      $dict = datapress_get_custom_field_value($value);
+      $prefix = substr($key, 6);
+      foreach ($dict as $customk => $customv) {
+        $ret["custom-$prefix-$customk"] = $customv;
       }
     }
   }
@@ -124,7 +124,11 @@ function datapress_user_export_structure($user) {
   foreach ($user as $key => $value) {
     // StartsWith
     if (!strncmp($key, $needle, strlen($needle))) {
-      $ret['custom-' . substr($key, 6)] = datapress_get_custom_field_value($value);
+      $dict = datapress_get_custom_field_value($value);
+      $prefix = substr($key, 6);
+      foreach ($dict as $customk => $customv) {
+        $ret["custom-$prefix-$customk"] = $customv;
+      }
     }
   }
   //$ret['user'] = $user;
@@ -136,16 +140,33 @@ function datapress_get_custom_field_value($value) {
   $language = "und";
   if (isset($value[$language])) {
     foreach($value[$language] as $item) {
+      $x = array();
       if (isset($item["value"])) {
-        // there is a raw value
-        array_push($ret, $item["value"]);
+        $x["value"] = $item["value"];
+        array_push($ret, $x);
+      } elseif (isset($item["filename"])) {
+        $x["filename"] = $item["filename"];
+        if (isset($item["uri"])) {
+          // Override with URI if possible
+          if (!(strpos($item["uri"], "//") === false)) {
+            $x["filename"] = substr($item["uri"], strpos($item["uri"], "//") + 2);
+          }
+        }
+        array_push($ret, $x);
+      } elseif (isset($item["uid"])) {
+        $user = user_load($item["uid"]);
+        $x["name"] = $user->name;
+        $x["uid"] = $user->uid;
+        array_push($ret, $x);
       } elseif (isset($item["nid"])) {
         $node = node_load($item["nid"]);
-        array_push($ret, $node->title);
+        $x["name"] = $node->title;
+        $x["nid"] = $node->nid;
+        array_push($ret, $x);
       }
-      // No final else
     }
   }
+  
   if (sizeof($ret) == 1) {
     $ret = $ret[0];
   } elseif (sizeof($ret) == 0) {
