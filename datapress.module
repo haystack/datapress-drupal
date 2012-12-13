@@ -35,7 +35,10 @@ function datapress_nodes_by_type($type) {
   if (!empty($nodes["node"])) {
     foreach ($nodes["node"] as $key => $node) {
       $node = node_load($key);
-      array_push($ret["items"], datapress_node_export_structure($node));
+      $items = datapress_node_export($node);
+      foreach ($items as $item) {
+        array_push($ret["items"], $item);
+      }
     }
   }
   drupal_json_output($ret);
@@ -64,14 +67,18 @@ function datapress_users_by_role($roleName) {
     if (!empty($users["user"])) {
       foreach ($users["user"] as $key => $user) {
         $user = user_load($key);
-        array_push($ret["items"], datapress_user_export_structure($user));
+        $items = datapress_user_export($user);
+        foreach ($items as $item) {
+          array_push($ret["items"], $item);
+        }
       }
     }
   }
   drupal_json_output($ret);
 }
 
-function datapress_node_export_structure($node) {
+function datapress_node_export($node) {
+  $items = array();
   $ret = array();
   $ret['id'] = $node->nid;
   $ret['nid'] = $node->nid;
@@ -97,11 +104,12 @@ function datapress_node_export_structure($node) {
       }
     }
   }
-
-  return $ret;
+  array_push($items, $ret);
+  return $items;
 }
 
-function datapress_user_export_structure($user) {
+function datapress_user_export($user) {
+  $items = array();
   $ret = array();
   $ret['id'] = $user->uid;
   $ret['uid'] = $user->uid;
@@ -131,8 +139,8 @@ function datapress_user_export_structure($user) {
       }
     }
   }
-  //$ret['user'] = $user;
-  return $ret;
+  array_push($items, $ret);
+  return $items;
 }
 
 function datapress_get_custom_field_value($value) {
