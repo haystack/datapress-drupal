@@ -97,10 +97,13 @@ function datapress_node_export($node) {
   foreach ($node as $key => $value) {
     // StartsWith
     if (!strncmp($key, $needle, strlen($needle))) {
-      $dict = datapress_get_custom_field_value($value);
-      if ($dict != null) {
+      $custom = datapress_get_custom_field_value($value);
+      if ($custom != null) {
         $prefix = substr($key, 6);
-        $ret["custom-" . $prefix] = $dict;
+        $ret["custom-" . $prefix] = $custom["main"];
+        foreach ($custom["additional"] as $additional) {
+          array_push($items, $additional);
+        }
       }
     }
   }
@@ -132,10 +135,13 @@ function datapress_user_export($user) {
   foreach ($user as $key => $value) {
     // StartsWith
     if (!strncmp($key, $needle, strlen($needle))) {
-      $dict = datapress_get_custom_field_value($value);
-      if ($dict != null) {
+      $custom = datapress_get_custom_field_value($value);
+      if ($custom != null) {
         $prefix = substr($key, 6);
-        $ret["custom-$prefix"] = $dict;
+        $ret["custom-$prefix"] = $custom["main"];
+        foreach ($custom["additional"] as $additional) {
+          array_push($items, $additional);
+        }
       }
     }
   }
@@ -145,6 +151,7 @@ function datapress_user_export($user) {
 
 function datapress_get_custom_field_value($value) {
   $ret = array();
+  $additional = array();
   $language = "und";
   if (isset($value[$language])) {
     foreach($value[$language] as $item) {
@@ -178,12 +185,18 @@ function datapress_get_custom_field_value($value) {
     if (strlen($ret[0]) == 0) {
       return null;
     } else {
-      return $ret[0];
+      $custom = array();
+      $custom["main"] = $ret[0];
+      $custom["additional"] = $additional;
+      return $custom;
     }
   } elseif (sizeof($ret) == 0) {
     return null;
   } else {
-    return array_values($ret);
+     $custom = array();
+     $custom["main"] = array_values($ret);
+     $custom["additional"] = $additional;
+     return $custom;
   }
 }
 
