@@ -91,9 +91,9 @@ function datapress_node_export_structure($node) {
     // StartsWith
     if (!strncmp($key, $needle, strlen($needle))) {
       $dict = datapress_get_custom_field_value($value);
-      $prefix = substr($key, 6);
-      foreach ($dict as $customk => $customv) {
-        $ret["custom-$prefix-$customk"] = $customv;
+      if ($dict != null) {
+        $prefix = substr($key, 6);
+        $ret["custom-" . $prefix] = $dict;
       }
     }
   }
@@ -125,9 +125,9 @@ function datapress_user_export_structure($user) {
     // StartsWith
     if (!strncmp($key, $needle, strlen($needle))) {
       $dict = datapress_get_custom_field_value($value);
-      $prefix = substr($key, 6);
-      foreach ($dict as $customk => $customv) {
-        $ret["custom-$prefix-$customk"] = $customv;
+      if ($dict != null) {
+        $prefix = substr($key, 6);
+        $ret["custom-$prefix"] = $dict;
       }
     }
   }
@@ -142,17 +142,16 @@ function datapress_get_custom_field_value($value) {
     foreach($value[$language] as $item) {
       $x = array();
       if (isset($item["value"])) {
-        $x["value"] = $item["value"];
-        array_push($ret, $x);
+        array_push($ret, $item["value"]);
       } elseif (isset($item["filename"])) {
-        $x["filename"] = $item["filename"];
+        $fname = $item["filename"];
         if (isset($item["uri"])) {
           // Override with URI if possible
           if (!(strpos($item["uri"], "//") === false)) {
-            $x["filename"] = substr($item["uri"], strpos($item["uri"], "//") + 2);
+            $fname  = substr($item["uri"], strpos($item["uri"], "//") + 2);
           }
         }
-        array_push($ret, $x);
+        array_push($ret, $fname);
       } elseif (isset($item["uid"])) {
         $user = user_load($item["uid"]);
         $x["name"] = $user->name;
@@ -168,101 +167,15 @@ function datapress_get_custom_field_value($value) {
   }
   
   if (sizeof($ret) == 1) {
-    $ret = $ret[0];
+    if (strlen($ret[0]) == 0) {
+      return null;
+    } else {
+      return $ret[0];
+    }
   } elseif (sizeof($ret) == 0) {
-    $ret = "";
+    return null;
+  } else {
+    return array_values($ret);
   }
-  return $ret;
 }
 
-
-//function datapress_library() {
-//  $path = drupal_get_path('module', 'datapress');
-//  $l/ibraries['datapress.lib'] = array(
-//    'title' => 'Datapress',
-//    'website' => 'http://projects.csail.mit.edu/datapress',
-//    'version' => '1.1',
-//    'js' => array(
-//      "$path/datapress.js" => array(),
-//    ),
-//    'css' => array(
-//      "$path/datapress.css" => array(
-//        'type' => 'file',
-//        'media' => 'screen',
-//      ),
-//    ),
-//  );
-//  return $libraries;
-//}
-//
-//function datapress_init() {
-////  drupal_add_library('datapress', 'datapress.lib');
-//}
-//
-///**
-// * Implements hook_help.
-// *
-// * Displays help and module information.
-// *
-// * @param path 
-// *   Which path of the site we're using to display help
-// * @param arg 
-// *   Array that holds the current path as returned from arg() function
-// */
-//function datapress_help($path, $arg) {
-//  switch ($path) {
-//    case "admin/help#datapress":
-//      return '<p>' . t("Helps facet objects.") . '</p>';
-//      break;
-//  }
-//}
-//
-///**
-// * Implements hook_block_info().
-// */
-//function datapress_block_info() {
-//  $blocks['datapress'] = array(
-//    'info' => t('Datapress'), //The name that will appear in the block list.
-//    'cache' => DRUPAL_CACHE_PER_ROLE, //Default
-//  );
-//  return $blocks;
-//}
-//
-//
-///**
-// * Datapress factet function
-// * 
-// * @return 
-// *   The body of the facets for this page
-// */
-//function datapress_facets() {
-//  return array();
-//} 
-//
-///**
-// * Displays the datapress block.
-// */
-//function datapress_block_view($delta = '') {
-//  switch($delta) {
-//    case 'current_posts':
-//      $block['subject'] = t('Fiter Items');
-//      if (user_access('access content')) {
-//        //Use our custom function to retrieve data.
-//
-//        $facets = datapress_facets();
-//
-//        if (empty($facets)) { //No content in the last week.
-//          $block['content'] = t('No filters available.');  
-//        } 
-//
-//        ////Iterate over the resultset and format as links.
-//        //foreach ($result as $node){
-//        //  $items[] = array(
-//        //    'data' => l($node->title, 'node/' . $node->nid),
-//        //  ); 
-//        //}
-//      }
-//  }
-//  return $block;
-//}
-//
