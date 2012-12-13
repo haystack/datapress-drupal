@@ -155,7 +155,6 @@ function datapress_get_custom_field_value($value) {
   $language = "und";
   if (isset($value[$language])) {
     foreach($value[$language] as $item) {
-      $x = array();
       if (isset($item["value"])) {
         array_push($ret, $item["value"]);
       } elseif (isset($item["filename"])) {
@@ -169,14 +168,22 @@ function datapress_get_custom_field_value($value) {
         array_push($ret, $fname);
       } elseif (isset($item["uid"])) {
         $user = user_load($item["uid"]);
+        $x = array();
         $x["name"] = $user->name;
+        $x["label"] = $user->name;
         $x["uid"] = $user->uid;
-        array_push($ret, $x);
+        $x["type"] = "User";
+        array_push($additional, $x);
+        array_push($ret, $user->name);
       } elseif (isset($item["nid"])) {
         $node = node_load($item["nid"]);
+        $x = array();
         $x["name"] = $node->title;
         $x["nid"] = $node->nid;
-        array_push($ret, $x);
+        $x["label"] = $node->title;
+        $x["type"] = "Node";
+        array_push($additional, $x);
+        array_push($ret, $node->title);
       }
     }
   }
