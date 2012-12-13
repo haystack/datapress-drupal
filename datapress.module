@@ -24,14 +24,12 @@ function datapress_menu() {
 
 function datapress_nodes_by_type($type) {
   $ret = array();
-  $ret["type"] = $type;
   $ret["items"] = array();
   $query = new EntityFieldQuery();
   $nodes = $query->entityCondition('entity_type', 'node')
                  ->propertyCondition('type', $type)
                  ->propertyCondition('status', 1)
                  ->execute();
-  $ret["nodes"] = $nodes;
   if (!empty($nodes["node"])) {
     foreach ($nodes["node"] as $key => $node) {
       $node = node_load($key);
