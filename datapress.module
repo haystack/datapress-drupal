@@ -37,6 +37,9 @@ function datapress_nodes_by_type($type) {
       $node = node_load($key);
       $items = datapress_node_export($node);
       foreach ($items as $item) {
+        if (!isset($item["type"])) {
+          $item["type"] = $type;
+        }
         array_push($ret["items"], $item);
       }
     }
