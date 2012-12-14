@@ -1,14 +1,6 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-
 function datapress_menu() { 
-//  $items['datapress/node/%node/json'] = array(
-//    'page callback' => 'datapress_json_endpoint',
-//    'page arguments' => array(1),
-//    'access arguments' => array('access content'),
-//  );
   $items['datapress/node/type/%/json'] = array(
     'page callback' => 'datapress_nodes_by_type',
     'page arguments' => array(3),
@@ -98,7 +90,7 @@ function datapress_node_export($node) {
   foreach ($node as $key => $value) {
     // StartsWith
     if (!strncmp($key, $needle, strlen($needle))) {
-      $custom = datapress_get_custom_field_value($value);
+      $custom = datapress_get_custom_field_value($value, true);
       if ($custom != null) {
         $prefix = substr($key, 6);
         $ret["custom-" . $prefix] = $custom["main"];
@@ -150,7 +142,7 @@ function datapress_user_export($user) {
   return $items;
 }
 
-function datapress_get_custom_field_value($value) {
+function datapress_get_custom_field_value($value, $expandSubNodes = false) {
   $ret = array();
   $additional = array();
   $language = "und";
@@ -169,21 +161,25 @@ function datapress_get_custom_field_value($value) {
         array_push($ret, $fname);
       } elseif (isset($item["uid"])) {
         $user = user_load($item["uid"]);
-        $x = array();
-        $x["name"] = $user->name;
-        $x["label"] = $user->name;
-        $x["uid"] = $user->uid;
-        $x["type"] = "User";
-        array_push($additional, $x);
+        if ($expandSubNodes) {
+          $x = array();
+          $x["name"] = $user->name;
+          $x["label"] = $user->name;
+          $x["uid"] = $user->uid;
+          $x["type"] = "User";
+          array_push($additional, $x);
+        }
         array_push($ret, $user->name);
       } elseif (isset($item["nid"])) {
         $node = node_load($item["nid"]);
-        $x = array();
-        $x["name"] = $node->title;
-        $x["nid"] = $node->nid;
-        $x["label"] = $node->title;
-        $x["type"] = "Node";
-        array_push($additional, $x);
+        if ($expandSubNodes) {
+          $x = array();
+          $x["name"] = $node->title;
+          $x["nid"] = $node->nid;
+          $x["label"] = $node->title;
+          $x["type"] = "Node";
+          array_push($additional, $x);
+        }
         array_push($ret, $node->title);
       }
     }
