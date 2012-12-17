@@ -38,6 +38,7 @@ function datapress_nodes_by_type($type) {
 }
 
 function datapress_users_by_role($roleName) {
+  $roleName = str_replace("__", " ", $roleName);
   $ret = array();
   $ret["items"] = array();
   $role = user_role_load_by_name($roleName);
