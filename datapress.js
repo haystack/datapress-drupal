@@ -89,12 +89,12 @@ var ExhibitInjectorImpl = function() {
   self.ImportJavascript = function(url) {
     var s = document.createElement('script');
     s.setAttribute('src', url);
-    document.getElementsByTagName('body')[0].appendChild(s);
+    document.getElementsByTagName('head')[0].appendChild(s);
   };
 
   /**
    * Adds the provided URL to the HEAD as a stylesheet.
-   *
+  *
    * @param url The URL of the Stylesheet to load.
    */
   self.ImportStylesheet = function(url) {
@@ -102,7 +102,7 @@ var ExhibitInjectorImpl = function() {
     s.setAttribute('href', url);
     s.setAttribute('rel', 'stylesheet');
     s.setAttribute('type', 'text/css');
-    document.getElementsByTagName('body')[0].appendChild(s);
+    document.getElementsByTagName('head')[0].appendChild(s);
   };
 
   /**
@@ -115,7 +115,7 @@ var ExhibitInjectorImpl = function() {
     s.setAttribute('href', url);
     s.setAttribute('rel', 'exhibit/data');
     s.setAttribute('type', 'application/json');
-    document.getElementsByTagName('body')[0].appendChild(s);
+    document.getElementsByTagName('head')[0].appendChild(s);
   }
 
   /**
@@ -203,7 +203,11 @@ jQuery(function() {
   });
   if (foundSome) {
     // Now start up the Exhibit loader
-    window.exhibitInjector = new ExhibitInjectorImpl();
-    window.exhibitInjector.LoadExhibit();
+    jQuery(function() {
+      window.exhibitInjector = new ExhibitInjectorImpl();
+      window.exhibitInjector.LoadExhibit();
+    });
   }
 });
+
+
