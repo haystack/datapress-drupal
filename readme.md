@@ -36,9 +36,9 @@ The people data feeds are parameterized by the user **role** and accessed by the
 
     /datapress/user/role/ROLE/json
 
-When a role has a space in it, use the URL encoded space character, **%20**. For example, if I wanted to get a data feed for all people with the role `principle investigator`, I would use the URL
+When a role has a space in it, use a double underscore. For example, if I wanted to get a data feed for all people with the role `principle investigator`, use the URL
 
-    /datapress/user/role/principle%20investigator/json
+    /datapress/user/role/principle__investigator/json
 
 The fields returned for each person by this request are:
 
@@ -66,7 +66,7 @@ The node data feeds are parameterized by the node **type** and accessed by the f
 
     /datapress/node/type/TYPE/json
 
-When a role has a space in it, **use an underscore**. *Note that this is different than the case for Users.* Blame Drupal. For example, if you wanted to get a data feed for all nodes with the type `Research Topic`, you would use the URL
+When a role has a space in it, use a **single underscore**. *Note that this is different than the case for Users.* Blame Drupal. For example, if you wanted to get a data feed for all nodes with the type `Research Topic`, you would use the URL
 
     /datapress/node/type/Research_Topic/json
 
